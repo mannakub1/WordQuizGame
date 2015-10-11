@@ -1,16 +1,19 @@
 package com.example.manny.wordquizgame;
 
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.logging.Handler;
+
 
 
 public class GameActivity extends AppCompatActivity {
@@ -49,9 +52,18 @@ public class GameActivity extends AppCompatActivity {
             case 1 : mNumChoices = 4 ; break;
             case 2 : mNumChoices = 6 ; break;
         }
-        
+
+        mFileNameList = new ArrayList<>();
+        mQuizWordList = new ArrayList<>();
+        mChoiceWordList = new ArrayList<>();
+
+        mRandom = new Random();
+        mHandler = new Handler();
+
         setupViews();
+        getImageFileName();
     }
+
 
     private void setupViews() {
         mQuestionNumberTextView = (TextView)findViewById(R.id.questionNumberTextView);
@@ -59,4 +71,26 @@ public class GameActivity extends AppCompatActivity {
         mButtonTableLayout = (TableLayout) findViewById(R.id.buttonTableLayout);
         mAnswerTextView = (TextView) findViewById(R.id.answerTextView);
     }
+
+    private void getImageFileName() {
+        String[] categories = {"animals","body","colors","numbers","objects"};
+
+        AssetManager assets = getAssets();
+        for(String category : categories){
+            try {
+                String[] fileNames = assets.list(category);
+                for(String fileName : fileNames){
+                    mFileNameList.add(fileName.replace(".png"," "));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(TAG,"Error listing files in " + category);
+            }
+        }
+        Log.i(TAG,"--------รายชื่อไฟล์ทั้งหมด");
+        for(String fileName : mFileNameList){
+            Log.i(TAG,fileName);
+        }
+    }
+
 }
